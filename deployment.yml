@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: json-service
+spec:
+  selector:
+    matchLabels:
+      run: json-service
+  template:
+    metadata:
+      labels:
+        run: json-service
+    spec:
+      containers:
+      - name: json-service
+        image: apurv98/json_service:latest
+        ports:
+        - containerPort: 3000
+        resources:
+          limits:
+            cpu: 500m
+          requests:
+            cpu: 200m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: json-service
+  labels:
+    run: json-service
+spec:
+  ports:
+    - protocol: TCP
+      port: 3000       # Internal port of the service
+      targetPort: 3000   # Port on the pod
+  type: NodePort
+  externalIPs:
+    - 192.168.141.25  # Use the host's IP address
+  selector:
+    run: json-service
